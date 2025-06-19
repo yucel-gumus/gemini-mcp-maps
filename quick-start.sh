@@ -32,6 +32,7 @@ if [ ! -f ".env.local" ]; then
 # Google Gemini API Key
 # Get your API key from: https://makersuite.google.com/app/apikey
 GEMINI_API_KEY=your_api_key_here
+VITE_GEMINI_API_KEY=your_api_key_here
 EOF
     echo "✅ .env.local dosyası oluşturuldu"
     echo "⚠️  Önemli: .env.local dosyasındaki 'your_api_key_here' kısmını gerçek API key'iniz ile değiştirin"
@@ -53,9 +54,9 @@ if grep -q "your_api_key_here" .env.local 2>/dev/null; then
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         read -p "API Key'inizi girin: " api_key
         if [ ! -z "$api_key" ]; then
-            # API key'i .env.local dosyasında değiştir
+            # API key'i .env.local dosyasında değiştir (hem GEMINI_API_KEY hem VITE_GEMINI_API_KEY)
             sed -i.bak "s/your_api_key_here/$api_key/g" .env.local
-            echo "✅ API key kaydedildi"
+            echo "✅ API key kaydedildi (hem GEMINI_API_KEY hem VITE_GEMINI_API_KEY)"
         fi
     fi
 fi

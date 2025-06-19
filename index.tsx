@@ -49,14 +49,18 @@ const EXAMPLE_PROMPTS = [
   "Gerçekten komik veya alışılmadık bir adı olan bir kasaba veya şehir bulup bana gösterebilir misin?"
 ];
 
-// API key kontrolü
-if (!process.env.GEMINI_API_KEY) {
+// API key kontrolü - Vite için VITE_ prefix gerekli
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
+
+if (!apiKey) {
   console.error('❌ GEMINI_API_KEY bulunamadı! Lütfen .env.local dosyasını kontrol edin.');
+  console.error('Geliştirme: .env.local dosyasında GEMINI_API_KEY');
+  console.error('Production: GitHub Secrets\'da GEMINI_API_KEY');
   throw new Error('API key gerekli. README.md dosyasındaki kurulum talimatlarını takip edin.');
 }
 
 const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY,
+  apiKey: apiKey,
 });
 
 function createAiChat(mcpClient: Client) {

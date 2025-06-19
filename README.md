@@ -29,6 +29,7 @@ MCP (Model Context Protocol) ile Google Gemini AI'yi Leaflet haritalarıyla ente
    ```bash
    # .env.local dosyası oluşturun
    echo "GEMINI_API_KEY=your_api_key_here" > .env.local
+   echo "VITE_GEMINI_API_KEY=your_api_key_here" >> .env.local
    ```
    
    **Seçenek B: Environment variable**
