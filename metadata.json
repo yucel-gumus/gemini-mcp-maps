@@ -1,6 +1,36 @@
 {
-  "name": "MCP Maps Basic",
-  "description": "MCP & Gemini power your global guide! AI answers geo-queries on interactive maps. Explore, discover, and see the world anew.",
+  "name": "MCP Maps Basic - Türkçe Harita Asistanı",
+  "description": "Google Gemini AI ile entegre edilmiş Türkçe destekli interaktif harita uygulaması. MCP protokolü kullanarak coğrafi konumları arama, keşfetme ve Leaflet haritalar üzerinde görselleştirme imkanı sunar. 60+ Türkçe konum desteği ile Pisa Kulesi, Eyfel Kulesi gibi meşhur yerleri kolayca bulabilirsiniz.",
+  "version": "1.0.0",
+  "author": "Yücel",
+  "license": "Apache-2.0",
+  "type": "web-application",
+  "framework": "Lit Element + TypeScript + Vite",
+  "features": [
+    "Google Gemini AI entegrasyonu",
+    "Leaflet ile interaktif haritalar",
+    "Türkçe konum desteği (60+ çeviri)",
+    "MCP protokolü ile standardize AI-araç iletişimi",
+    "Nominatim API ile geocoding",
+    "Akıllı konum arama ve çeviri sistemi"
+  ],
+  "dependencies": {
+    "ai": "@google/genai",
+    "mcp": "@modelcontextprotocol/sdk",
+    "maps": "leaflet",
+    "ui": "lit",
+    "markdown": "marked",
+    "validation": "zod"
+  },
+  "deployment": {
+    "build_command": "npm run build",
+    "output_directory": "dist",
+    "supported_platforms": ["Vercel", "Netlify", "GitHub Pages", "Firebase Hosting"]
+  },
+  "environment": {
+    "required_api_keys": ["GEMINI_API_KEY"],
+    "node_version": ">=16.0.0"
+  },
   "requestFramePermissions": [],
-  "prompt": ""
+  "prompt": "Yardımsever ve esprili bir harita asistanı olarak, kullanıcıların dünyadaki ilginç yerleri keşfetmesine yardımcı olun. Türkçe konum isimlerini destekleyin ve her konum talebi için 'konum_goster' aracını kullanın."
 }
