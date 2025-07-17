@@ -1,7 +1,4 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
-*/
+
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
@@ -10,7 +7,6 @@ import { ChatState, marked, Playground } from './playground';
 
 import { startMcpGoogleMapServer } from './mcp_maps_server';
 
-/* --------- */
 
 
 async function startClient(transport: Transport) {
@@ -19,7 +15,7 @@ async function startClient(transport: Transport) {
   return client;
 }
 
-/* ------------ */
+
 
 
 const SYSTEM_INSTRUCTIONS = `Sen, Yücel için oluşturulmuş, yardımsever ve esprili bir harita asistanısın.
@@ -36,16 +32,10 @@ Tüm metin yanıtların ve açıklamaların Türkçe olmalıdır.`;
 
 const EXAMPLE_PROMPTS = [
   'Görülecek havalı bir yer var mı?',
-  'Bana San Franciscoyu göster',
   'Eğik bir kulenin olduğu bir yer var mı?',
-  'Everest Dağını göster',
-  'Bana Hawaiideki Mauna Keayı gösterebilir misin?',
-  "Hadi Venedike gidelim, İtalya.",
   'Beni dünyanın en kuzeydeki başkentine götür',
   "En güneydeki kalıcı yerleşim yeri neresi? Adı ne ve nerede?",
-  'Bana Ürdündeki antik Petra kentinin yerini göster',
   "Perudaki Machu Picchuya atlayalım",
-  "Çindeki Üç Boğaz Barajını bana gösterebilir misin?",
   "Gerçekten komik veya alışılmadık bir adı olan bir kasaba veya şehir bulup bana gösterebilir misin?"
 ];
 
@@ -53,9 +43,6 @@ const EXAMPLE_PROMPTS = [
 const apiKey = import.meta.env.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
 
 if (!apiKey) {
-  console.error('❌ GEMINI_API_KEY bulunamadı! Lütfen .env.local dosyasını kontrol edin.');
-  console.error('Geliştirme: .env.local dosyasında GEMINI_API_KEY');
-  console.error('Production: GitHub Secrets\'da GEMINI_API_KEY');
   throw new Error('API key gerekli. README.md dosyasındaki kurulum talimatlarını takip edin.');
 }
 
@@ -65,7 +52,7 @@ const ai = new GoogleGenAI({
 
 function createAiChat(mcpClient: Client) {
   return ai.chats.create({
-    model: 'gemini-2.0-flash',
+    model: 'gemini-2.5-pro',
     config: {
       systemInstruction: SYSTEM_INSTRUCTIONS,
       tools: [mcpToTool(mcpClient)],
@@ -87,9 +74,7 @@ document.addEventListener('DOMContentLoaded', async (event) => {
   rootElement.appendChild(playground);
   playground.initializeMap();
 
-  playground.renderMapQuery({location: 'Istanbul'});
 
-  // ---------
 
   const [transportA, transportB] = InMemoryTransport.createLinkedPair();
 
@@ -99,7 +84,7 @@ document.addEventListener('DOMContentLoaded', async (event) => {
 
   const mcpClient = await startClient(transportB);
 
-  // --------
+
 
   const aiChat = createAiChat(mcpClient);
 
@@ -107,11 +92,6 @@ document.addEventListener('DOMContentLoaded', async (event) => {
     input: string,
     role: string,
   ) => {
-    console.log(
-      'sendMessageHandler',
-      input,
-      role
-    );
 
     const { thinking, text } = playground.addMessage('assistant', '');
     const message = [];
@@ -136,7 +116,6 @@ document.addEventListener('DOMContentLoaded', async (event) => {
         for (const candidate of chunk.candidates ?? []) {
           for (const part of candidate.content?.parts ?? []) {
             if (part.functionCall) {
-              console.log('FUNCTION CALL:', part.functionCall.name, part.functionCall.args);
               const mcpCall = {
                 name: camelCaseToDash(part.functionCall.name!),
                 arguments: part.functionCall.args
@@ -164,7 +143,6 @@ document.addEventListener('DOMContentLoaded', async (event) => {
         }
       }
     } catch (e: any) {
-      console.error('GenAI SDK Error:', e.message);
       let message = e.message;
       const splitPos = e.message.indexOf('{');
       if (splitPos > -1) {
@@ -176,17 +154,14 @@ document.addEventListener('DOMContentLoaded', async (event) => {
             message = await marked.parse(message);
           }
         } catch (e) {
-          console.error('Unable to parse the error message:', e);
         }
       }
       const { text } = playground.addMessage('error', '');
       text.innerHTML = message;
     }
 
-    // close thinking block
     thinking.parentElement!.removeAttribute('open');
 
-    // If the answer was just code
     if (text.innerHTML.trim().length === 0) {
       text.innerHTML = 'Done';
     }

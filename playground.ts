@@ -14,79 +14,6 @@ import {markedHighlight} from 'marked-highlight';
 
 import {MapParams} from './mcp_maps_server';
 
-// Türkçe konum isimleri için çeviri sözlüğü
-const LOCATION_TRANSLATIONS: Record<string, string[]> = {
-  'pisa kulesi': ['Leaning Tower of Pisa', 'Torre di Pisa', 'Pisa Tower'],
-  'eyfel kulesi': ['Eiffel Tower', 'Tour Eiffel'],
-  'özgürlük heykeli': ['Statue of Liberty', 'Liberty Statue'],
-  'büyük çin seddi': ['Great Wall of China', 'Chinese Wall'],
-  'koloseum': ['Colosseum Rome', 'Roman Colosseum'],
-  'kapadokya': ['Cappadocia Turkey', 'Cappadocia'],
-  'boğaziçi köprüsü': ['Bosphorus Bridge', '15 July Martyrs Bridge'],
-  'galata kulesi': ['Galata Tower Istanbul'],
-  'ayasofya': ['Hagia Sophia Istanbul'],
-  'sultanahmet camii': ['Blue Mosque Istanbul'],
-  'topkapı sarayı': ['Topkapi Palace Istanbul'],
-  'machu picchu': ['Machu Picchu Peru'],
-  'petra': ['Petra Jordan'],
-  'stonehenge': ['Stonehenge England'],
-  'taj mahal': ['Taj Mahal India'],
-  'christ the redeemer': ['Christ the Redeemer Brazil', 'Cristo Redentor'],
-  'christ heykeli': ['Christ the Redeemer Brazil', 'Cristo Redentor'],
-  'chichen itza': ['Chichen Itza Mexico'],
-  'angkor wat': ['Angkor Wat Cambodia'],
-  'sagrada familia': ['Sagrada Familia Barcelona'],
-  'neuschwanstein kalesi': ['Neuschwanstein Castle Germany'],
-  'mont saint-michel': ['Mont Saint-Michel France'],
-  'akropolis': ['Acropolis Athens', 'Parthenon Athens'],
-  'big ben': ['Big Ben London'],
-  'london eye': ['London Eye'],
-  'burj khalifa': ['Burj Khalifa Dubai'],
-  'sydney opera evi': ['Sydney Opera House'],
-  'golden gate köprüsü': ['Golden Gate Bridge San Francisco'],
-  'niagara şelalesi': ['Niagara Falls'],
-  'grand canyon': ['Grand Canyon'],
-  'mount rushmore': ['Mount Rushmore'],
-  'uluru': ['Uluru Australia', 'Ayers Rock'],
-  'everest dağı': ['Mount Everest', 'Everest'],
-  'kilimanjaro': ['Mount Kilimanjaro'],
-  'fuji dağı': ['Mount Fuji Japan'],
-  'matterhorn': ['Matterhorn Switzerland'],
-  'santorini': ['Santorini Greece'],
-  'venedik': ['Venice Italy'],
-  'floransa': ['Florence Italy'],
-  'roma': ['Rome Italy'],
-  'paris': ['Paris France'],
-  'londra': ['London UK'],
-  'new york': ['New York City'],
-  'tokyo': ['Tokyo Japan'],
-  'pekin': ['Beijing China'],
-  'moskova': ['Moscow Russia'],
-  'saint petersburg': ['Saint Petersburg Russia'],
-  'istanbul': ['Istanbul Turkey'],
-  'ankara': ['Ankara Turkey'],
-  'izmir': ['Izmir Turkey'],
-  'antalya': ['Antalya Turkey'],
-  'bodrum': ['Bodrum Turkey'],
-  'kaş': ['Kas Turkey'],
-  'marmaris': ['Marmaris Turkey'],
-  'fethiye': ['Fethiye Turkey'],
-  'pamukkale': ['Pamukkale Turkey'],
-  'göreme': ['Goreme Turkey', 'Cappadocia Turkey'],
-  'ürgüp': ['Urgup Turkey', 'Cappadocia Turkey'],
-  'nevşehir': ['Nevsehir Turkey', 'Cappadocia Turkey'],
-  'trabzon': ['Trabzon Turkey'],
-  'rize': ['Rize Turkey'],
-  'artvin': ['Artvin Turkey'],
-  'erzurum': ['Erzurum Turkey'],
-  'van': ['Van Turkey'],
-  'diyarbakır': ['Diyarbakir Turkey'],
-  'gaziantep': ['Gaziantep Turkey'],
-  'şanlıurfa': ['Sanliurfa Turkey'],
-  'mardin': ['Mardin Turkey'],
-  'hatay': ['Hatay Turkey', 'Antakya Turkey'],
-};
-
 // Konum ismini normalize etme fonksiyonu
 function normalizeLocationName(location: string): string {
   return location.toLowerCase()
@@ -104,26 +31,49 @@ function getSearchTermsForLocation(location: string): string[] {
   const normalized = normalizeLocationName(location);
   const searchTerms = [location]; // Orijinal ismi de dene
   
-  // Sözlükten çevirileri ekle
-  if (LOCATION_TRANSLATIONS[normalized]) {
-    searchTerms.push(...LOCATION_TRANSLATIONS[normalized]);
+  // Özel meşhur yerler için alternatifler
+  const specialLocations: {[key: string]: string[]} = {
+    'pisa kulesi': ['Leaning Tower of Pisa', 'Torre di Pisa', 'Tower of Pisa'],
+    'eyfel kulesi': ['Eiffel Tower', 'Tour Eiffel'],
+    'galata kulesi': ['Galata Tower', 'Torre di Galata'],
+    'kiz kulesi': ['Maiden\'s Tower', 'Leander\'s Tower'],
+    'big ben': ['Big Ben', 'Elizabeth Tower'],
+    'kapadokya': ['Cappadocia', 'Göreme'],
+    'ayasofya': ['Hagia Sophia', 'Aya Sofya'],
+    'sultanahmet camii': ['Blue Mosque', 'Sultan Ahmed Mosque'],
+    'bogazici koprusu': ['Bosphorus Bridge', 'Boğaziçi Köprüsü'],
+    'galata koprusu': ['Galata Bridge', 'Galata Köprüsü'],
+    'topkapi sarayi': ['Topkapi Palace', 'Topkapı Sarayı'],
+    'dolmabahce sarayi': ['Dolmabahçe Palace', 'Dolmabahçe Sarayı'],
+    'rumeli hisari': ['Rumeli Fortress', 'Rumeli Hisarı'],
+    'anadolu hisari': ['Anadolu Fortress', 'Anadolu Hisarı']
+  };
+  
+  // Özel konumlar için alternatifler ekle
+  if (specialLocations[normalized]) {
+    searchTerms.push(...specialLocations[normalized]);
   }
   
   // Yaygın konum türleri için ek terimler
   if (normalized.includes('kulesi') || normalized.includes('tower')) {
     searchTerms.push(location.replace('kulesi', 'tower'));
+    searchTerms.push(location.replace('Kulesi', 'Tower'));
   }
   if (normalized.includes('köprüsü') || normalized.includes('bridge')) {
     searchTerms.push(location.replace('köprüsü', 'bridge'));
+    searchTerms.push(location.replace('Köprüsü', 'Bridge'));
   }
   if (normalized.includes('camii') || normalized.includes('mosque')) {
     searchTerms.push(location.replace('camii', 'mosque'));
+    searchTerms.push(location.replace('Camii', 'Mosque'));
   }
   if (normalized.includes('sarayı') || normalized.includes('palace')) {
     searchTerms.push(location.replace('sarayı', 'palace'));
+    searchTerms.push(location.replace('Sarayı', 'Palace'));
   }
   if (normalized.includes('kalesi') || normalized.includes('castle')) {
     searchTerms.push(location.replace('kalesi', 'castle'));
+    searchTerms.push(location.replace('Kalesi', 'Castle'));
   }
   
   return [...new Set(searchTerms)]; // Tekrarları kaldır
@@ -210,8 +160,8 @@ export class Playground extends LitElement {
     const mapElement = this.querySelector('#map');
     if (mapElement && !this.map) {
       this.map = L.map(mapElement as HTMLElement).setView(
-        [48.8566, 2.3522],
-        13,
+        [0, 0],
+        2,
       );
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
@@ -252,12 +202,10 @@ export class Playground extends LitElement {
                 .bindPopup(`<b>${location.location}</b><br/>${display_name}`)
                 .addTo(this.markerLayer);
               
-              console.log(`🗺️ Konum bulundu: "${location.location}" -> "${searchTerm}" (${lat}, ${lon})`);
               found = true;
               break;
             }
           } catch (searchError) {
-            console.warn(`Arama terimi "${searchTerm}" için hata:`, searchError);
             continue;
           }
         }
@@ -265,11 +213,10 @@ export class Playground extends LitElement {
         if (!found) {
           this.addMessage(
             'assistant',
-            `Üzgünüm, "${location.location}" konumunu bulamadım. Lütfen daha spesifik bir konum adı deneyin.`,
+            `Üzgünüm, "${location.location}" konumunu bulamadım. Lütfen daha spesifik bir konum adı deneyin veya şehir adını da ekleyin (örn: "Pisa Kulesi, İtalya").`,
           );
         }
       } catch (error) {
-        console.error('Geocoding error:', error);
         this.addMessage(
           'assistant',
           'Konum arama sırasında bir hata oluştu.',
@@ -374,7 +321,7 @@ export class Playground extends LitElement {
             @click=${() => {
               this.selectedChatTab = ChatTab.GEMINI;
             }}>
-            Gemini
+            AI-MCP-MAP
           </button>
         </div>
         <div
@@ -393,13 +340,13 @@ export class Playground extends LitElement {
               id="chatStatus"
               class=${classMap({'hidden': this.chatState === ChatState.IDLE})}>
               ${this.chatState === ChatState.GENERATING
-                ? html`${ICON_BUSY} Generating...`
+                ? html`${ICON_BUSY} Üretiliyor...`
                 : html``}
               ${this.chatState === ChatState.THINKING
-                ? html`${ICON_BUSY} Thinking...`
+                ? html`${ICON_BUSY} Düşünüyor...`
                 : html``}
               ${this.chatState === ChatState.EXECUTING
-                ? html`${ICON_BUSY} Executing...`
+                ? html`${ICON_BUSY} Yürütülüyor...`
                 : html``}
             </div>
             <div id="inputArea">
@@ -413,7 +360,7 @@ export class Playground extends LitElement {
                 @keydown=${(e: KeyboardEvent) => {
                   this.inputKeyDownAction(e);
                 }}
-                placeholder="Type your message..."
+                placeholder="Görmek istediğiniz yeri tarif edin..."
                 autocomplete="off" />
               <button
                 id="sendButton"
