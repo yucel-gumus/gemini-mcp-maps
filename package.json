@@ -6,18 +6,14 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview",
-    "deploy": "npm run build && echo 'Build tamamlandı! dist/ klasörünü hosting servisinize yükleyebilirsiniz.'"
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@google/genai": "^1.0.0",
-    "@modelcontextprotocol/sdk": "^1.11.4",
     "highlight.js": "^11.11.1",
     "leaflet": "^1.9.4",
     "lit": "^3.3.0",
     "marked": "^15.0.12",
-    "marked-highlight": "^2.2.1",
-    "zod": "^3.25.7"
+    "marked-highlight": "^2.2.1"
   },
   "devDependencies": {
     "@types/leaflet": "^1.9.18",
