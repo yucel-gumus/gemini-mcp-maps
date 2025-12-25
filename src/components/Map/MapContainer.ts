@@ -64,7 +64,8 @@ export class MapContainer extends LitElement {
         this.map.setView([result.lat, result.lon], 13);
         L.marker([result.lat, result.lon])
             .bindPopup(`<b>${originalName}</b><br/>${result.displayName}`)
-            .addTo(this.markerLayer);
+            .addTo(this.markerLayer)
+            .openPopup();
     }
 
     render() {

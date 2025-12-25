@@ -43,8 +43,11 @@ export class ChatContainer extends LitElement {
         this.chatState = state;
     }
 
-    setInputField(value: string) {
-        this.chatInput?.setInputValue(value.trim());
+    async setInputField(value: string) {
+        await this.updateComplete;
+        if (this.chatInput) {
+            this.chatInput.setInputValue(value.trim());
+        }
     }
 
     addMessage(role: string, content: string): MessageElement {
