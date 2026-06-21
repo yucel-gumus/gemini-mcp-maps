@@ -40,12 +40,15 @@ npm run dev
 
 ### Backend
 
-Backend için ayrı bir FastAPI projesi gereklidir. API endpoint: `/api/chat`
+Backend: `python_backend` (Gemini Gateway) — `POST /api/chat` (SSE), `X-API-Key` zorunlu.
+
+**CORS:** Tarayıcıdan doğrudan API çağrısı için gateway `.env` içinde `ALLOWED_ORIGINS` listesine frontend origin ekleyin (ör. `https://yucel-gumus.github.io` GitHub Pages için).
 
 **Environment Variables:**
 ```bash
 # Frontend (.env)
 VITE_API_URL=http://localhost:8000
+VITE_CLIENT_API_KEY=your_client_api_key
 ```
 
 ## 📦 Teknoloji Stack

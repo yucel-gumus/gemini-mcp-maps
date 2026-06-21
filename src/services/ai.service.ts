@@ -13,6 +13,7 @@ export async function* streamChat(message: string, sessionId: string = 'default'
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'X-API-Key': import.meta.env.VITE_CLIENT_API_KEY || '',
         },
         body: JSON.stringify({
             message,
