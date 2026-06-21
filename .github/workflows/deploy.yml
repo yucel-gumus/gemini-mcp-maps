@@ -36,8 +36,8 @@ jobs:
         run: npm run build
         env:
           NODE_ENV: production
-          VITE_API_URL: ${{ secrets.VITE_API_URL }}
-          VITE_CLIENT_API_KEY: ${{ secrets.VITE_CLIENT_API_KEY }}
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
+          VITE_CLIENT_API_KEY: ${{ vars.VITE_CLIENT_API_KEY }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

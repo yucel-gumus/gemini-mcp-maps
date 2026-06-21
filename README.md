@@ -85,6 +85,7 @@ data: {"type": "done"}
 - **URL:** https://yucel-gumus.github.io/gemini-mcp-maps/
 - **Deploy:** `main` push → GitHub Actions (Vercel kullanılmaz)
 - **Repo secrets (Settings → Secrets):** `VITE_API_URL`, `VITE_CLIENT_API_KEY`
+- **Repo variables (Settings → Variables):** `VITE_API_URL` (zaten var), `VITE_CLIENT_API_KEY` (gateway client key) — CI build bunları kullanır
 
 ## 📄 License
 

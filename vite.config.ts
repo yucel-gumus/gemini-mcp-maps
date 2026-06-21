@@ -7,7 +7,7 @@ export default defineConfig(({ mode }) => {
     base: mode === 'production' ? '/gemini-mcp-maps/' : '/',
     define: {
       'import.meta.env.VITE_API_URL': JSON.stringify(
-        env.VITE_API_URL || process.env.VITE_API_URL || 'http://localhost:8000'
+        env.VITE_API_URL || process.env.VITE_API_URL || (mode === 'production' ? 'https://api.yucelgumus.dev' : 'http://localhost:8000')
       ),
       'import.meta.env.VITE_CLIENT_API_KEY': JSON.stringify(
         env.VITE_CLIENT_API_KEY || process.env.VITE_CLIENT_API_KEY || ''
