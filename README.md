@@ -80,6 +80,12 @@ data: {"type": "function_call", "name": "konum_goster", "args": {"location": "Pi
 data: {"type": "done"}
 ```
 
+## 🌐 Canlı (GitHub Pages)
+
+- **URL:** https://yucel-gumus.github.io/gemini-mcp-maps/
+- **Deploy:** `main` push → GitHub Actions (Vercel kullanılmaz)
+- **Repo secrets (Settings → Secrets):** `VITE_API_URL`, `VITE_CLIENT_API_KEY`
+
 ## 📄 License
 
 Apache 2.0 License

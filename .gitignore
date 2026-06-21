@@ -29,4 +29,3 @@ dist-ssr
 *.sw?
 .env.local
 .claude
-.github
