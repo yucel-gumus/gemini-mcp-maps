@@ -9,12 +9,9 @@ export interface SSEEvent {
 }
 
 export async function* streamChat(message: string, sessionId: string = 'default'): AsyncGenerator<SSEEvent> {
-    const response = await fetch(`${AI_CONFIG.apiUrl}/api/chat`, {
+    const response = await fetch(`${AI_CONFIG.apiUrl}/api/maps/chat`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-API-Key': import.meta.env.VITE_CLIENT_API_KEY || '',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             message,
             session_id: sessionId,

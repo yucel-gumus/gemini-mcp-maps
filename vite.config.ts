@@ -3,20 +3,19 @@ import { defineConfig, loadEnv } from 'vite';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', '');
+  const bff =
+    env.VITE_BFF_URL ||
+    process.env.VITE_BFF_URL ||
+    (mode === 'production' ? 'https://pages-bff.vercel.app' : 'http://127.0.0.1:3099');
   return {
     base: mode === 'production' ? '/gemini-mcp-maps/' : '/',
     define: {
-      'import.meta.env.VITE_API_URL': JSON.stringify(
-        env.VITE_API_URL || process.env.VITE_API_URL || (mode === 'production' ? 'https://api.yucelgumus.dev' : 'http://localhost:8000')
-      ),
-      'import.meta.env.VITE_CLIENT_API_KEY': JSON.stringify(
-        env.VITE_CLIENT_API_KEY || process.env.VITE_CLIENT_API_KEY || ''
-      )
+      'import.meta.env.VITE_BFF_URL': JSON.stringify(bff),
     },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
-      }
-    }
+      },
+    },
   };
 });
