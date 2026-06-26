@@ -1,92 +1,124 @@
-# 🗺️ MCP Maps
+# 🗺️ MCP Maps (`gemini-mcp-maps`)
 
-AI destekli interaktif harita asistanı. Gemini AI ile Türkçe konuşarak dünya üzerindeki yerleri keşfet.
+Türkçe doğal dil ile konuşarak haritada yer arayan **AI harita asistanı**. Gemini **function calling** (araç tanımları) ile `konum_goster` gibi araçları tetikler; yanıtlar **SSE** ile akış halinde gelir. Lit + Vite frontend, backend olarak merkezi **Gemini Gateway** `POST /api/chat`.
 
-## ✨ Özellikler
+**Canlı:** [yucel-gumus.github.io/gemini-mcp-maps](https://yucel-gumus.github.io/gemini-mcp-maps/)  
+**GitHub:** [yucel-gumus/gemini-mcp-maps](https://github.com/yucel-gumus/gemini-mcp-maps)
 
-- 🤖 **Gemini AI** entegrasyonu (FastAPI backend)
-- 🗺️ **Leaflet** ile interaktif haritalar
-- 🇹🇷 **Türkçe** dil desteği
-- 🎨 **Modern UI** - Glassmorphism, dark mode
-- 📍 **Akıllı konum arama** - Nominatim geocoding
+---
 
-## 🏗️ Mimari
+## Özellikler
+
+- 🤖 Gemini sohbet + harita araçları (MCP tarzı tool tanımları gateway’de)
+- 🗺️ Leaflet harita, marker ve fly-to animasyonları
+- 🇹🇷 Türkçe arayüz ve prompt odaklı UX
+- 🎨 Glassmorphism, dark mode
+- 📍 Nominatim geocoding (gateway veya araç katmanı)
+- 📡 SSE istemci — kısmi metin ve `function_call` event’leri
+
+---
+
+## Mimari
 
 ```
 ┌─────────────────────────────────────┐
-│            FRONTEND                 │
-│  ├── Vite + TypeScript + Lit       │
-│  ├── Leaflet Maps                   │
-│  └── SSE Client                     │
+│  Frontend (Vite + TypeScript + Lit) │
+│  Leaflet + SSE EventSource/fetch    │
 └──────────────┬──────────────────────┘
-               │ HTTP/SSE
+               │
+       VITE_BFF_URL/api/maps/chat  (Pages prod)
+       veya VITE_API_URL/api/chat (dev)
+               │
                ▼
 ┌─────────────────────────────────────┐
-│         BACKEND (FastAPI)           │
-│  ├── Gemini AI                      │
-│  ├── Tool definitions               │
-│  └── API Key (güvenli)              │
+│  pages-bff (Vercel) — opsiyonel     │
+└──────────────┬──────────────────────┘
+               ▼
+┌─────────────────────────────────────┐
+│  python_backend — POST /api/chat    │
+│  Gemini + tools + session_id        │
 └─────────────────────────────────────┘
 ```
 
-## 🚀 Kurulum
+---
 
-### Frontend
+## SSE olay tipleri (örnek)
+
+```
+data: {"type":"text","content":"Tabii, gösteriyorum..."}
+data: {"type":"function_call","name":"konum_goster","args":{"location":"Pisa Kulesi"}}
+data: {"type":"done"}
+```
+
+Frontend `function_call` aldığında haritada geocode + marker günceller.
+
+---
+
+## Kurulum
 
 ```bash
+git clone https://github.com/yucel-gumus/gemini-mcp-maps.git
+cd gemini-mcp-maps
 npm install
+cp .env.example .env
+```
+
+```env
+VITE_API_URL=http://localhost:8000
+VITE_CLIENT_API_KEY=your_client_key
+# Production Pages:
+VITE_BFF_URL=https://pages-bff.vercel.app
+```
+
+```bash
 npm run dev
 ```
 
-### Backend
+---
 
-Backend: `python_backend` (Gemini Gateway) — `POST /api/chat` (SSE), `X-API-Key` zorunlu.
+## GitHub Pages
 
-**CORS:** Tarayıcıdan doğrudan API çağrısı için gateway `.env` içinde `ALLOWED_ORIGINS` listesine frontend origin ekleyin (ör. `https://yucel-gumus.github.io` GitHub Pages için).
+- Deploy: `main` → GitHub Actions (Vercel **kullanılmaz**)
+- **Secrets/Variables:** `VITE_API_URL`, `VITE_CLIENT_API_KEY` veya `VITE_BFF_URL`
+- Public URL: `/gemini-mcp-maps/` path altında
 
-**Environment Variables:**
-```bash
-# Frontend (.env)
-VITE_API_URL=http://localhost:8000
-VITE_CLIENT_API_KEY=your_client_api_key
-```
+---
 
-## 📦 Teknoloji Stack
+## API — `POST /api/chat`
 
-| Katman | Teknoloji |
-|--------|-----------|
-| Frontend | Vite, TypeScript, Lit |
-| UI | CSS (Glassmorphism, Dark Mode) |
-| Harita | Leaflet, OpenStreetMap |
-| Geocoding | Nominatim API |
-| Backend | FastAPI, Gemini AI |
+**İstek:**
 
-## 🔧 API Spec
-
-### POST /api/chat
-
-**Request:**
 ```json
 {
-  "message": "Pisa Kulesi'ni göster",
+  "message": "İstanbul'daki en eski camileri göster",
   "session_id": "default"
 }
 ```
 
-**Response (SSE Stream):**
-```
-data: {"type": "text", "content": "Tabii!"}
-data: {"type": "function_call", "name": "konum_goster", "args": {"location": "Pisa Kulesi"}}
-data: {"type": "done"}
-```
+**Yanıt:** `text/event-stream` — yukarıdaki JSON satırları.
 
-## 🌐 Canlı (GitHub Pages)
+Header: `X-API-Key` (BFF arkasında sunucuda).
 
-- **URL:** https://yucel-gumus.github.io/gemini-mcp-maps/
-- **Deploy:** `main` push → GitHub Actions (Vercel kullanılmaz)
-- **Repo secrets (Settings → Secrets):** `VITE_API_URL`, `VITE_CLIENT_API_KEY`
-- **Repo variables (Settings → Variables):** `VITE_API_URL` (zaten var), `VITE_CLIENT_API_KEY` (gateway client key) — CI build bunları kullanır
+---
 
-## 📄 License
+## CORS ve güvenlik
 
-Apache 2.0 License
+- Doğrudan gateway: `ALLOWED_ORIGINS` içinde GitHub Pages origin
+- Önerilen: **pages-bff** — anahtar yalnızca Vercel’de
+
+---
+
+## Teknoloji tablosu
+
+| Katman | Teknoloji |
+|--------|-----------|
+| UI | Lit, Vite, TypeScript, CSS |
+| Harita | Leaflet, OSM |
+| Geocoding | Nominatim |
+| AI | Gemini via [llm_api](https://github.com/yucel-gumus/llm_api) |
+
+---
+
+## Lisans
+
+Apache-2.0
