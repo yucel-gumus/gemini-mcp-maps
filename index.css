@@ -1,25 +1,26 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
-  /* 60-30-10 Strict Color System */
-  /* 60% Dominant Canvas / Primary Background */
+  /* 60-30-10 Darkened Palette derived strictly from #FFEBD3, #FFB6A6, #9BCEC1 */
+  /* 60% Dominant Canvas (#FFEBD3 family) */
   --c-60-canvas: #FFEBD3;
-  --c-60-canvas-trans: rgba(255, 235, 211, 0.9);
-  --c-60-canvas-subtle: rgba(255, 235, 211, 0.6);
+  --c-60-canvas-trans: #FFEBD3;
+  --c-60-canvas-subtle: #F7D4AA;
 
-  /* 30% Secondary Structure / Cards / Borders / Text */
+  /* 30% Secondary Structure / Cards / Borders / Text (#FFB6A6 family) */
   --c-30-surface: #FFB6A6;
-  --c-30-surface-trans: rgba(255, 182, 166, 0.2);
-  --c-30-surface-light: rgba(255, 182, 166, 0.12);
-  --c-30-border: rgba(255, 182, 166, 0.4);
-  --c-30-border-strong: #FFB6A6;
-  --c-30-text: #FFB6A6;
+  --c-30-surface-trans: #FFB6A6;
+  --c-30-surface-dark: #D4614A;
+  --c-30-border: #D4614A;
+  --c-30-border-strong: #752516;
+  --c-30-text: #752516;
 
-  /* 10% Accent / Interactive CTAs / Active Highlights */
+  /* 10% Accent / Interactive CTAs (#9BCEC1 family) */
   --c-10-accent: #9BCEC1;
-  --c-10-accent-hover: #86bfae;
-  --c-10-accent-trans: rgba(155, 206, 193, 0.22);
-  --c-10-accent-glow: rgba(155, 206, 193, 0.45);
+  --c-10-accent-hover: #448073;
+  --c-10-accent-dark: #244B43;
+  --c-10-accent-trans: #9BCEC1;
+  --c-10-accent-glow: #9BCEC1;
 
   /* Spacing & Radii Design Tokens */
   --radius-sm: 12px;
@@ -27,8 +28,8 @@
   --radius-lg: 26px;
   --radius-pill: 9999px;
 
-  --shadow-soft: 0 12px 36px -6px rgba(255, 182, 166, 0.28);
-  --shadow-accent: 0 8px 24px -2px rgba(155, 206, 193, 0.4);
+  --shadow-soft: 0 10px 28px -4px #D4614A;
+  --shadow-accent: 0 8px 20px -2px #448073;
 
   --transition-fast: 180ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-normal: 280ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -89,10 +90,8 @@ html, body {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background: rgba(255, 182, 166, 0.28);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border-right: 2px solid var(--c-30-border-strong);
+  background: #F7D4AA;
+  border-right: 2.5px solid var(--c-30-border-strong);
   z-index: 100;
   position: relative;
   box-shadow: var(--shadow-soft);
@@ -118,7 +117,7 @@ html, body {
   width: 42px;
   height: 42px;
   border-radius: var(--radius-md);
-  background: var(--c-30-surface);
+  background: var(--c-30-border-strong);
   color: var(--c-60-canvas);
   display: flex;
   align-items: center;
@@ -188,7 +187,7 @@ html, body {
   flex-direction: column;
   flex: 1;
   overflow: hidden;
-  background: rgba(255, 235, 211, 0.45);
+  background: var(--c-60-canvas);
 }
 
 .chat-messages {
@@ -211,8 +210,8 @@ html, body {
   text-align: center;
   padding: 36px 24px;
   margin: auto 0;
-  background: var(--c-60-canvas);
-  border: 2px dashed var(--c-30-border);
+  background: #F7D4AA;
+  border: 2.5px dashed var(--c-30-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-soft);
   animation: messageSlide 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -222,8 +221,8 @@ html, body {
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: var(--c-10-accent-trans);
-  border: 2px solid var(--c-10-accent);
+  background: var(--c-10-accent-hover);
+  border: 2px solid var(--c-10-accent-dark);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -234,7 +233,7 @@ html, body {
 .chat-welcome-icon svg {
   width: 30px;
   height: 30px;
-  fill: var(--c-10-accent);
+  fill: var(--c-60-canvas);
 }
 
 .chat-welcome-title {
@@ -279,11 +278,11 @@ html, body {
 }
 
 .role-user {
-  background: var(--c-10-accent);
+  background: var(--c-10-accent-hover);
   color: var(--c-60-canvas);
   align-self: flex-end;
   border-bottom-right-radius: 6px;
-  border: 2px solid var(--c-10-accent);
+  border: 2px solid var(--c-10-accent-dark);
   font-weight: 700;
   box-shadow: var(--shadow-accent);
 }
@@ -295,17 +294,21 @@ html, body {
 }
 
 .role-assistant {
-  background: var(--c-60-canvas);
-  color: var(--c-30-border-strong);
+  background: var(--c-30-surface);
+  color: var(--c-30-text);
   align-self: flex-start;
   border-bottom-left-radius: 6px;
   border: 2.5px solid var(--c-30-border-strong);
 }
 
+.role-assistant .text {
+  color: var(--c-30-text);
+}
+
 .role-error {
-  background: var(--c-30-surface-trans);
+  background: var(--c-30-surface);
   border: 2.5px dashed var(--c-30-border-strong);
-  color: var(--c-30-border-strong);
+  color: var(--c-30-text);
   align-self: flex-start;
   border-bottom-left-radius: 6px;
   font-weight: 700;
@@ -441,8 +444,8 @@ html, body {
 
 /* Status Indicator Footer Bar */
 .footer {
-  border-top: 2px solid var(--c-30-border);
-  background: var(--c-60-canvas-trans);
+  border-top: 2.5px solid var(--c-30-border);
+  background: var(--c-60-canvas);
   padding: 8px 12px 14px 12px;
 }
 
@@ -490,23 +493,24 @@ html, body {
 
 #messageInput {
   flex: 1;
-  background: var(--c-60-canvas);
-  border: 2px solid var(--c-30-border-strong);
+  background: #F7D4AA;
+  border: 2.5px solid var(--c-30-border-strong);
   border-radius: var(--radius-pill);
   padding: 11px 18px;
-  color: var(--c-30-border-strong);
+  color: var(--c-30-text);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   font-family: inherit;
   outline: none;
   transition: var(--transition-normal);
-  box-shadow: inset 0 2px 6px rgba(255, 182, 166, 0.15);
+  box-shadow: inset 0 2px 6px #D4614A;
 }
 
 #messageInput::placeholder {
-  color: rgba(74, 44, 42, 0.65);
+  color: var(--c-30-border-strong);
   font-size: 12.5px;
-  font-weight: 500;
+  font-weight: 600;
+  opacity: 0.85;
 }
 
 #messageInput:focus {
@@ -518,8 +522,8 @@ html, body {
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  background: var(--c-10-accent);
-  border: 2px solid var(--c-10-accent);
+  background: var(--c-10-accent-hover);
+  border: 2px solid var(--c-10-accent-dark);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -532,7 +536,7 @@ html, body {
 
 #sendButton:hover {
   transform: scale(1.08);
-  background: var(--c-10-accent-hover);
+  background: var(--c-10-accent-dark);
 }
 
 #sendButton:active {
@@ -587,10 +591,9 @@ map-container {
 }
 
 .leaflet-control-zoom a {
-  background: var(--c-60-canvas-trans) !important;
-  backdrop-filter: blur(14px) !important;
+  background: #F7D4AA !important;
   color: var(--c-30-border-strong) !important;
-  border: 2px solid var(--c-30-border) !important;
+  border: 2.5px solid var(--c-30-border-strong) !important;
   width: 44px !important;
   height: 44px !important;
   line-height: 40px !important;
@@ -600,9 +603,9 @@ map-container {
 }
 
 .leaflet-control-zoom a:hover {
-  background: var(--c-10-accent) !important;
+  background: var(--c-10-accent-hover) !important;
   color: var(--c-60-canvas) !important;
-  border-color: var(--c-10-accent) !important;
+  border-color: var(--c-10-accent-dark) !important;
 }
 
 .leaflet-control-zoom-in {
@@ -615,9 +618,8 @@ map-container {
 
 /* Custom Popup Overlays */
 .leaflet-popup-content-wrapper {
-  background: var(--c-60-canvas) !important;
-  backdrop-filter: blur(18px) !important;
-  color: var(--c-30-border-strong) !important;
+  background: #F7D4AA !important;
+  color: var(--c-30-text) !important;
   border-radius: var(--radius-md) !important;
   box-shadow: var(--shadow-soft) !important;
   border: 2.5px solid var(--c-30-border-strong) !important;
@@ -685,7 +687,7 @@ map-container {
 }
 
 .leaflet-control-attribution {
-  background: rgba(255, 235, 211, 0.85) !important;
+  background: var(--c-60-canvas) !important;
   color: var(--c-30-border-strong) !important;
   font-size: 11px !important;
   font-weight: 700 !important;
@@ -776,7 +778,7 @@ code.hljs {
 
 .hljs-comment,
 .hljs-quote {
-  color: rgba(255, 182, 166, 0.65);
+  color: #D4614A;
   font-style: italic;
 }
 
