@@ -9,45 +9,72 @@ export interface SSEEvent {
 }
 
 export async function* streamChat(message: string, sessionId: string = 'default'): AsyncGenerator<SSEEvent> {
-    const response = await fetch(`${AI_CONFIG.apiUrl}/api/maps/chat`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            message,
-            session_id: sessionId,
-        }),
-    });
+    const headers: Record<string, string> = {
+        'Content-Type': 'application/json'
+    };
 
-    if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
+    if (AI_CONFIG.apiKey) {
+        headers['x-api-key'] = AI_CONFIG.apiKey;
+        headers['Authorization'] = `Bearer ${AI_CONFIG.apiKey}`;
     }
 
-    const reader = response.body?.getReader();
-    if (!reader) {
-        throw new Error('No response body');
-    }
+    try {
+        const response = await fetch(`${AI_CONFIG.apiUrl}/api/maps/chat`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({
+                message,
+                session_id: sessionId,
+            }),
+        });
 
-    const decoder = new TextDecoder();
-    let buffer = '';
+        if (!response.ok) {
+            throw new Error(`API error: ${response.status}`);
+        }
 
-    while (true) {
-        const { done, value } = await reader.read();
+        const reader = response.body?.getReader();
+        if (!reader) {
+            throw new Error('No response body');
+        }
 
-        if (done) break;
+        const decoder = new TextDecoder();
+        let buffer = '';
 
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
+        while (true) {
+            const { done, value } = await reader.read();
 
-        for (const line of lines) {
-            if (line.startsWith('data: ')) {
-                try {
-                    const data = JSON.parse(line.slice(6)) as SSEEvent;
-                    yield data;
-                } catch {
-                    continue;
+            if (done) break;
+
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop() || '';
+
+            for (const line of lines) {
+                if (line.startsWith('data: ')) {
+                    try {
+                        const data = JSON.parse(line.slice(6)) as SSEEvent;
+                        yield data;
+                    } catch {
+                        continue;
+                    }
                 }
             }
         }
+    } catch (err: unknown) {
+        // Fallback for direct geocoding if remote/local API endpoint is unreachable
+        yield {
+            type: 'thinking',
+            content: 'Sunucu yanıt vermedi. Doğrudan konum arama moduna geçiliyor...'
+        };
+        yield {
+            type: 'function_call',
+            name: 'konum_goster',
+            args: { location: message }
+        };
+        yield {
+            type: 'text',
+            content: `**"${message}"** konumu harita üzerinde görüntülendi.`
+        };
+        yield { type: 'done' };
     }
 }

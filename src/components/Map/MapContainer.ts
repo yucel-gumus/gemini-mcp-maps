@@ -4,6 +4,15 @@ import * as L from 'leaflet';
 import type { MapParams, GeocodingResult } from '../../types';
 import { MAP_CONFIG } from '../../constants/config';
 import { searchLocation } from '../../services/geocoding.service';
+import { getLocationMediaDetails } from '../../services/image.service';
+
+const CUSTOM_PIN_ICON = L.divIcon({
+    className: 'custom-pin-wrapper',
+    html: `<div class="custom-map-pin"><div class="pin-body"><div class="pin-inner-dot"></div></div></div>`,
+    iconSize: MAP_CONFIG.markerSize,
+    iconAnchor: MAP_CONFIG.markerAnchor,
+    popupAnchor: MAP_CONFIG.popupAnchor
+});
 
 @customElement('map-container')
 export class MapContainer extends LitElement {
@@ -23,14 +32,20 @@ export class MapContainer extends LitElement {
     private initializeMap() {
         const mapElement = this.querySelector('#map');
         if (mapElement && !this.map) {
-            this.map = L.map(mapElement as HTMLElement).setView(
+            this.map = L.map(mapElement as HTMLElement, {
+                minZoom: MAP_CONFIG.minZoom,
+                maxZoom: MAP_CONFIG.maxZoom,
+            }).setView(
                 MAP_CONFIG.defaultCenter,
                 MAP_CONFIG.defaultZoom
             );
+
             L.tileLayer(MAP_CONFIG.tileUrl, {
+                minZoom: MAP_CONFIG.minZoom,
                 maxZoom: MAP_CONFIG.maxZoom,
                 attribution: MAP_CONFIG.attribution,
             }).addTo(this.map);
+
             this.markerLayer.addTo(this.map);
         }
     }
@@ -54,16 +69,31 @@ export class MapContainer extends LitElement {
             return { success: false, error: this.lastError };
         }
 
-        this.flyToLocation(result, params.location);
+        await this.flyToLocation(result, params.location);
         return { success: true };
     }
 
-    private flyToLocation(result: GeocodingResult, originalName: string) {
+    private async flyToLocation(result: GeocodingResult, originalName: string) {
         if (!this.map) return;
 
-        this.map.setView([result.lat, result.lon], 13);
-        L.marker([result.lat, result.lon])
-            .bindPopup(`<b>${originalName}</b><br/>${result.displayName}`)
+        this.map.flyTo([result.lat, result.lon], MAP_CONFIG.targetZoom, {
+            duration: MAP_CONFIG.flyToDuration
+        });
+
+        // Fetch location photo & summary details
+        const media = await getLocationMediaDetails(originalName);
+
+        const popupContent = `
+            <div class="popup-card">
+                ${media.imageUrl ? `<img src="${media.imageUrl}" alt="${originalName}" class="popup-card-image" />` : ''}
+                <div class="popup-card-title">${originalName}</div>
+                <div class="popup-card-address">${result.displayName}</div>
+                ${media.description ? `<div class="popup-card-desc">${media.description}</div>` : ''}
+            </div>
+        `;
+
+        L.marker([result.lat, result.lon], { icon: CUSTOM_PIN_ICON })
+            .bindPopup(popupContent, { closeButton: false })
             .addTo(this.markerLayer)
             .openPopup();
     }

@@ -9,6 +9,8 @@ import './components/Map/MapContainer';
 import type { ChatContainer } from './components/Chat/ChatContainer';
 import type { MapContainer } from './components/Map/MapContainer';
 
+const TYPING_INDICATOR = `<div class="typing-indicator"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>`;
+
 async function initializeApp() {
     const rootElement = document.querySelector('#root');
     if (!rootElement) {
@@ -27,7 +29,7 @@ async function initializeApp() {
 
     chatContainer.sendMessageHandler = async (input: string) => {
         const { thinking, text } = chatContainer.addMessage('assistant', '');
-        text.innerHTML = '...';
+        text.innerHTML = TYPING_INDICATOR;
 
         let thoughtContent = '';
         let textContent = '';
@@ -93,7 +95,7 @@ async function initializeApp() {
 
         thinking.parentElement!.removeAttribute('open');
 
-        if (!text.innerHTML.trim() || text.innerHTML === '...') {
+        if (!text.innerHTML.trim() || text.innerHTML === TYPING_INDICATOR || text.innerHTML === '...') {
             text.innerHTML = 'Tamamlandı';
         }
 

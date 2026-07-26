@@ -6,7 +6,7 @@ import { ChatState } from '../../types';
 @customElement('chat-input')
 export class ChatInput extends LitElement {
     @property({ type: String }) chatState: ChatState = ChatState.IDLE;
-    @property({ type: String }) placeholder = 'Görmek istediğiniz yeri tarif edin...';
+    @property({ type: String }) placeholder = 'Bir konum veya mekan arayın...';
 
     @state() private inputValue = '';
 
@@ -57,22 +57,22 @@ export class ChatInput extends LitElement {
           @keydown=${this.handleKeyDown}
           placeholder=${this.placeholder}
           autocomplete="off"
+          aria-label="Konum Arama Girdisi"
           ?disabled=${isDisabled}
         />
         <button
           id="sendButton"
           class=${classMap(buttonClasses)}
           @click=${this.sendMessage}
+          aria-label="Gönder"
           ?disabled=${isDisabled}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            height="30px"
-            viewBox="0 -960 960 960"
-            width="30px"
+            viewBox="0 0 24 24"
             fill="currentColor"
           >
-            <path d="M120-160v-240l320-80-320-80v-240l760 320-760 320Z" />
+            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
           </svg>
         </button>
       </div>

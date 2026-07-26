@@ -15,7 +15,6 @@ export enum ChatState {
 export enum ChatRole {
     USER = 'user',
     ASSISTANT = 'assistant',
-    SYSTEM = 'system',
     ERROR = 'error',
 }
 
@@ -24,15 +23,5 @@ export interface GeocodingResult {
     lon: number;
     displayName: string;
 }
-
-export interface MapConfig {
-    defaultCenter: [number, number];
-    defaultZoom: number;
-    tileUrl: string;
-    maxZoom: number;
-    attribution: string;
-}
-
-export type MapQueryHandler = (params: MapParams) => void;
 
 export type SendMessageHandler = (input: string, role: string) => Promise<void>;
