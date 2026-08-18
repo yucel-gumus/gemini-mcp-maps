@@ -1,5 +1,6 @@
 # 🗺️ Gemini MCP Maps - AI-Powered Geospatial Assistant & Map Tools
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-GitHub_Pages-22C55E?style=for-the-badge&logo=github&logoColor=white)](https://yucel-gumus.github.io/gemini-mcp-maps/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![Model Context Protocol](https://img.shields.io/badge/MCP-Protocol-purple?style=for-the-badge)](https://modelcontextprotocol.io/)
@@ -7,6 +8,8 @@
 [![Portfolio](https://img.shields.io/badge/Portfolio-yucelgumus.dev-2563EB?style=for-the-badge&logo=google-chrome&logoColor=white)](https://www.yucelgumus.dev/)
 
 > **Google Gemini AI** ve **Model Context Protocol (MCP)** standartlarını kullanarak doğal dil konum sorgularını coğrafi koordinatlara, harita işaretçilerine ve anlık mekan görsellerine dönüştüren harita ve rota asistanı.
+
+🔗 **Canlı Demo:** [yucel-gumus.github.io/gemini-mcp-maps](https://yucel-gumus.github.io/gemini-mcp-maps/)
 
 ---
 

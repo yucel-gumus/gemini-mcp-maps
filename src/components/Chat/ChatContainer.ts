@@ -153,6 +153,9 @@ export class ChatContainer extends LitElement {
               .chatState=${this.chatState}
               @send-message=${this.handleSendMessage}
             ></chat-input>
+            <div style="text-align: center; margin-top: 10px; font-size: 12px; font-weight: 700; color: var(--c-30-border-strong); opacity: 0.9;">
+              Geliştirici: <a href="https://www.yucelgumus.dev/" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">Yücel Gümüş</a>
+            </div>
           </div>
         </div>
       </div>
