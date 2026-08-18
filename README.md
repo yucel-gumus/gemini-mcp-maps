@@ -1,98 +1,106 @@
-# 🗺️ Gemini MCP Maps (Türkçe Destekli Akıllı Harita Asistanı)
+# 🗺️ Gemini MCP Maps - AI-Powered Geospatial Assistant & Map Tools
 
-Gemini MCP Maps; kullanıcıların harita ve lokasyon aramalarını doğal dilde yapmalarını sağlayan, Google Gemini yapay zeka modelinin **Function Calling (Araç Çağırma)** yeteneğini **Leaflet Harita** altyapısıyla birleştiren modern ve akışkan (streaming) bir web uygulamasıdır. 
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Model Context Protocol](https://img.shields.io/badge/MCP-Protocol-purple?style=for-the-badge)](https://modelcontextprotocol.io/)
+[![Google Gemini](https://img.shields.io/badge/Google_Gemini-1.5_Flash-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://deepmind.google/technologies/gemini/)
+[![Portfolio](https://img.shields.io/badge/Portfolio-yucelgumus.dev-2563EB?style=for-the-badge&logo=google-chrome&logoColor=white)](https://www.yucelgumus.dev/)
 
-Uygulamanın arayüzü **Lit Web Components** mimarisiyle sıfırdan bileşen tabanlı olarak kodlanmıştır.
+> **Google Gemini AI** ve **Model Context Protocol (MCP)** standartlarını kullanarak doğal dil konum sorgularını coğrafi koordinatlara, harita işaretçilerine ve anlık mekan görsellerine dönüştüren harita ve rota asistanı.
 
 ---
 
 ## 🌟 Öne Çıkan Özellikler
 
-* 🇹🇷 **Doğal Dil ile Konum Arama:** *"İstanbul'daki en tarihi 3 camiyi göster"*, *"Bana Pisa Kulesi'ne odaklan"* gibi komutları doğrudan algılar ve haritayı o konuma kaydırır.
-* 🤖 **Gemini Function Calling Entegrasyonu:** Model, kullanıcının isteklerine göre arka planda `konum_goster` gibi harita araçlarını parametreleriyle tetikler.
-* 📡 **Akışkan SSE İstemcisi (Server-Sent Events):** Backend sunucusundan gelen yanıtlar hem metin hem de fonksiyon çağrıları (event) halinde anlık olarak akar.
-* 🗺️ **Leaflet & Nominatim Geocoding:** Fonksiyon çağrısı alındığında istemci tarafında **Nominatim API** üzerinden adres coğrafi koordinatlara (enlem, boylam) dönüştürülür ve harita `flyTo` animasyonu ile o konuma kaydırılıp marker eklenir.
-* 🎨 **Modern Glassmorphism Tasarım:** Tamamen responsive, karanlık mod uyumlu ve göze hitap eden modern arayüz tasarımı.
+- 💬 **Doğal Dil ile Harita Kontrolü:** Kullanıcının sohbet penceresinde sorduğu yerleri veya rotaları analiz ederek haritada otomatik odaklanma (pan/zoom) ve marker yerleştirme.
+- 📍 **Geocoding & Ters Geocoding Entegrasyonu:** Adresleri anında koordinatlara ve koordinatları anlamsal mekan bilgilerine dönüştürme (`geocoding.service.ts`).
+- 🖼️ **Mekan Görselleri & Zenginleştirme:** Sorgulanan konumların yüksek kaliteli fotoğraflarını çekip sohbet akışında ve harita üzerinde gösterme.
+- ⚡ **Hafif ve Tip Güvenli Mimari:** TypeScript ve saf modern DOM optimizasyonları ile yüksek render performansı.
 
 ---
 
-## 🏗️ Sistem Mimarisi ve Akış
+## 🏗️ Mimari & Çalışma Şeması
 
-```
-[ Lit Frontend (Tarayıcı) ] ──(SSE EventSource /api/chat)──► [ Pages BFF (Vercel) ]
-           ▲                                                        │
-           │                                                (Yetkilendirme / Proxy)
-     (Map.flyTo)                                                    ▼
-[ Leaflet / Nominatim ] ◄──(Function Call Event)─── [ Python Backend (Gemini API) ]
-```
-
-1. **İstek:** Kullanıcı arama alanına bir metin girer.
-2. **Akış (BFF & Backend):** İstek, **Pages BFF** proxy'si üzerinden Python Backend'e iletilir. Gemini, arama yapılması gerektiğine karar verirse `konum_goster` aracı oluşturur.
-3. **SSE Parse:** Tarayıcı, gelen event-stream'i okur:
-   ```json
-   data: {"type":"text","content":"Pisa Kulesi'ni gösteriyorum..."}
-   data: {"type":"function_call","name":"konum_goster","args":{"location":"Pisa Kulesi"}}
-   ```
-4. **Harita Güncellemesi:** Tarayıcı `function_call` event'ini yakalar, Nominatim'den koordinatları çözer, haritayı kaydırır ve işaretçiyi yerleştirir.
-
----
-
-## 🛠️ Teknoloji Stack
-
-* **Frontend Framework:** Lit (LitElement, reactive properties, template rendering), Vite, TypeScript.
-* **Harita Kütüphanesi:** Leaflet, OpenStreetMap (OSM).
-* **Geocoding API:** OpenStreetMap Nominatim API.
-* **Yapay Zeka API:** Google Gemini API (via [llm_api Gateway](https://github.com/yucel-gumus/llm_api)).
-* **Markdown Ayrıştırıcı:** `marked`, `marked-highlight`, `highlight.js` (sohbet penceresindeki kod blokları ve markdown biçimlendirmeleri için).
-
----
-
-## 📂 Proje Klasör Yapısı
-
-```
-gemini-mcp-maps/
-├── src/
-│   ├── components/       # Lit bileşenleri (ChatPanel, LeafletMap)
-│   ├── services/         # API servisleri, SSE parser ve geocoder
-│   ├── app.ts            # Ana LitElement uygulama girişi
-│   └── types.ts
-├── index.html
-├── index.css             # Tailwind benzeri optimize edilmiş global CSS stilleri
-├── vite.config.ts
-└── package.json
+```mermaid
+graph LR
+    User([Kullanıcı]) <-->|Sohbet & Konum Sorusu| Chat[Chat Container & Input]
+    Chat --> AISvc[Gemini AI Service]
+    AISvc --> GeoSvc[Geocoding & Location Service]
+    AISvc --> ImgSvc[Image Service]
+    GeoSvc --> Map[Interactive Map Container]
+    ImgSvc --> Chat
 ```
 
 ---
 
-## 🚀 Kurulum ve Yerel Çalıştırma
+## 🚀 Hızlı Başlangıç
 
-### 1. Bağımlılıkları Yükleyin
+### Gereksinimler
+- **Node.js**: v18.0+
+- **Google Gemini API Key**
+
+### Kurulum
+
 ```bash
 git clone https://github.com/yucel-gumus/gemini-mcp-maps.git
 cd gemini-mcp-maps
+
 npm install
 ```
 
-### 2. Ortam Değişkenleri (`.env`)
-Proje kök dizininde `.env` oluşturun:
+### Ortam Değişkenleri (`.env`)
 
 ```env
-# Yerel Python Backend adresi (Geliştirme için)
-VITE_API_URL=http://localhost:8000
-VITE_CLIENT_API_KEY=your_development_client_key
-
-# Üretim (Production) BFF adresi
-VITE_BFF_URL=https://pages-bff.vercel.app
+VITE_GEMINI_API_KEY=your_gemini_api_key_here
 ```
 
-### 3. Geliştirme Sunucusunu Başlatma
+### Çalıştırma
+
 ```bash
 npm run dev
 ```
-Uygulama `http://localhost:5173` (veya Vite'in verdiği portta) başlayacaktır.
 
 ---
 
-## 🔗 Canlı Bağlantılar
-* **Canlı Demo:** [https://yucel-gumus.github.io/gemini-mcp-maps/](https://yucel-gumus.github.io/gemini-mcp-maps/)
-* **Python Backend Gateway:** [yucel-gumus/llm_api](https://github.com/yucel-gumus/llm_api)
+## 📂 Proje Dizin Yapısı
+
+```
+gemini-mcp-maps/
+├── index.html
+├── package.json
+├── vite.config.ts
+└── src/
+    ├── main.ts
+    ├── types/                      # Tip tanımları
+    ├── constants/                  # Promptlar ve sistem yapılandırması
+    ├── utils/                      # Konum ve metin ayrıştırma yardımcıları
+    ├── services/
+    │   ├── ai.service.ts           # Gemini API istemcisi
+    │   ├── geocoding.service.ts    # Koordinat çözümleme
+    │   └── image.service.ts        # Mekan görsel servisi
+    └── components/
+        ├── Chat/                   # Sohbet arayüzü
+        ├── Map/                    # Harita motoru
+        └── shared/                 # Markdown ayrıştırıcı
+```
+
+---
+
+## 📄 Lisans
+Bu proje [MIT Lisansı](LICENSE) ile lisanslanmıştır.
+
+---
+
+## 👨‍💻 Geliştirici & İletişim
+
+**Yücel Gümüş** - Full Stack Developer
+
+- 🌐 **Web Sitesi / Portfolyo:** [yucelgumus.dev](https://www.yucelgumus.dev/)
+- 💼 **LinkedIn:** [linkedin.com/in/yucel-gumus](https://www.linkedin.com/in/yucel-gumus/)
+- 🐙 **GitHub:** [@yucel-gumus](https://github.com/yucel-gumus)
+
+<p align="left">
+  <a href="https://www.yucelgumus.dev/" target="_blank" rel="noopener noreferrer">
+    <img src="https://img.shields.io/badge/Developed%20by-Yücel%20Gümüş-blue?style=for-the-badge&logo=google-chrome&logoColor=white" alt="Yücel Gümüş Portfolio" />
+  </a>
+</p>
