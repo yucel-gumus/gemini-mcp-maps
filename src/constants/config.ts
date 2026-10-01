@@ -1,11 +1,11 @@
-const BFF_URL =
-  import.meta.env.VITE_BFF_URL ||
-  import.meta.env.VITE_API_URL ||
-  'https://pages-bff.vercel.app';
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL !== undefined && import.meta.env.VITE_API_URL !== ''
+    ? import.meta.env.VITE_API_URL
+    : (import.meta.env.DEV ? '' : 'https://api.yucelgumus.dev');
 
 export const AI_CONFIG = {
-  apiUrl: BFF_URL,
-  apiKey: import.meta.env.VITE_CLIENT_API_KEY || '',
+  apiUrl: API_BASE_URL,
+  apiKey: import.meta.env.VITE_CLIENT_API_KEY || import.meta.env.VITE_API_KEY || '',
 };
 
 /** Public geocoding (no API key). */

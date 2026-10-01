@@ -36,7 +36,8 @@ jobs:
         run: npm run build
         env:
           NODE_ENV: production
-          VITE_BFF_URL: ${{ vars.VITE_BFF_URL || 'https://pages-bff.vercel.app' }}
+          VITE_API_URL: ${{ vars.VITE_API_URL || 'https://api.yucelgumus.dev' }}
+          VITE_CLIENT_API_KEY: ${{ secrets.VITE_CLIENT_API_KEY || '' }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
